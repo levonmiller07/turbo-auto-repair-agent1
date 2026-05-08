@@ -1,0 +1,88 @@
+{
+  "name": "Turbo Auto Repair Assistant",
+  "firstMessage": "Hello! Thank you for calling Turbo Auto Repair. This is your AI assistant. How can I help you today?",
+  "model": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are the AI representative for Turbo Auto Repair, a top-rated shop (4.8 stars, 405 reviews) located at 7640 Florida Blvd, Baton Rouge, LA 70806. Phone: (225) 930-5472.\n\nBusiness Hours:\n- Monday – Friday: 8 AM – 6 PM\n- Saturday: 8 AM – 1 PM\n- Sunday: Closed\n\nYour goals:\n1. Answer questions about services (oil changes, brakes, tires, diagnostics, general repairs), location, and hours.\n2. Schedule appointments. You must collect: Name, Phone Number, Vehicle (Make, Model, Year), and Preferred Date/Time.\n3. Only schedule during business hours. If a customer asks for a time outside hours, or if they call while we are closed, inform them and suggest the next available slot.\n4. If a customer has a complaint or an urgent issue, use the `escalate_issue` tool to notify the owner.\n5. For pricing, provide general estimates but advise that a diagnostic is usually needed for exact quotes.\n6. Be friendly, professional, and efficient.\n\nTools available:\n- `check_availability(date)`: Returns available slots for a given date.\n- `book_appointment(date, time, service, name, phone, vehicle)`: Books the appointment in the calendar.\n- `escalate_issue(name, phone, details)`: Notifies the shop owner of an urgent matter."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "check_availability",
+          "description": "Check available appointment slots for a given date",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "The date to check (YYYY-MM-DD)"
+              }
+            },
+            "required": ["date"]
+          }
+        },
+        "server": {
+          "url": "https://your-server.com/api/vapi/tools"
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "book_appointment",
+          "description": "Book an appointment for auto repair service",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "description": "YYYY-MM-DD" },
+              "time": { "type": "string", "description": "HH:MM (24h format)" },
+              "service": { "type": "string", "description": "Type of service (e.g., oil change, brakes)" },
+              "name": { "type": "string", "description": "Customer name" },
+              "phone": { "type": "string", "description": "Customer phone number" },
+              "vehicle": { "type": "string", "description": "Vehicle make, model, and year" }
+            },
+            "required": ["date", "time", "service", "name", "phone", "vehicle"]
+          }
+        },
+        "server": {
+          "url": "https://your-server.com/api/vapi/tools"
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "escalate_issue",
+          "description": "Escalate a complaint or urgent issue to the shop owner",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "Customer name" },
+              "phone": { "type": "string", "description": "Customer phone number" },
+              "details": { "type": "string", "description": "Details of the issue or complaint" }
+            },
+            "required": ["name", "phone", "details"]
+          }
+        },
+        "server": {
+          "url": "https://your-server.com/api/vapi/tools"
+        }
+      }
+    ]
+  },
+  "voice": {
+    "provider": "vapi",
+    "voiceId": "Elliot"
+  },
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-3",
+    "language": "en"
+  },
+  "backgroundSound": "office",
+  "backchannelingEnabled": true
+}
